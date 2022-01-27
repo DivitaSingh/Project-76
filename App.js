@@ -1,36 +1,52 @@
-import 'react-native-gesture-handler';
-import * as React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-//import { StackNavigator } from '@react-navigation/stack';
-//import { createStackNavigator } from '@react-navigation/stack';
-//import { createStackNavigation } from '@react-navigation/stack';
-//import { createStack } from '@react-navigation/stack';
+import React, { Component } from "react";
+import { Rajdhani_600SemiBold } from "@expo-google-fonts/rajdhani";
+import * as Font from "expo-font";
 
-import HomeScreen from "./screens/Home";
-import StartMapScreen from "./screens/StarMap";
-import DailyPicScreen from "./screens/DailyPic";
-import SpaceCraftScreen from "./screens/SpaceCraft";
+import LoginScreen from "./screens/Login";
+import BottomTabNavigator from "./components/BottomTabNavigator";
 
-const Stack = createStackNavigator();
+import { createSwitchNavigator, createAppContainer } from "react-navigation";
 
-function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator initialRouteName="Home" screenOptions={{
-        headerShown: false
-      }}>
-    
-        {/* <Stack.Screen component="Home" name={HomeScreen} /> */}
-        {/* <Stack.Screen name="Home" component={HomeScreen} /> */}
-        {/* <Stack.Screen name="Home" component="HomeScreen" /> */}
-        {/* <Stack.Screen name:"Home" component:{HomeScreen} /> */}
-    
-        <Stack.Screen name="StarMap" component={StartMapScreen} />
-        <Stack.Screen name="DailyPic" component={DailyPicScreen} />
-        <Stack.Screen name="SpaceCraft" component={SpaceCraftScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+export default class App extends Component {
+  constructor() {
+    super();
+    this.state = {
+      fontLoaded: false
+    };
+  }
+
+  async loadFonts() {
+    await Font.loadAsync({
+      Rajdhani_600SemiBold: Rajdhani_600SemiBold
+    });
+    this.setState({ fontLoaded: true });
+  }
+
+  componentDidMount() {
+    this.loadFonts();
+  }
+
+  render() {
+    const { fontLoaded } = this.state;
+    if (fontLoaded) {
+      return <AppContainer />;
+    }
+    return null;
+  }
 }
 
-export default App;
+const AppSwitchNavigator = createSwitchNavigator(
+  {
+    Login: {
+      screen: LoginScreen
+    },
+    BottomTab: {
+      screen: BottomTabNavigator
+    }
+  },
+  {
+    initialRouteName: "Login"
+  }
+);
+
+const AppContainer = createAppContainer(AppSwitchNavigator);
